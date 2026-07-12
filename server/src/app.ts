@@ -7,6 +7,8 @@ import express, {
 import helmet from "helmet";
 import morgan from "morgan";
 
+import authRouter from "./routes/auth.routes.js";
+
 const app = express();
 
 app.use(
@@ -28,6 +30,7 @@ app.get("/api/v1/health", (_request: Request, response: Response) => {
     timestamp: new Date().toISOString(),
   });
 });
+app.use("/api/v1/auth", authRouter);
 
 app.use(
   (

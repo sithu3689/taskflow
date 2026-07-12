@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import authRouter from "./routes/auth.routes.js";
 const app = express();
 app.use(cors({
     origin: process.env.CLIENT_URL ?? "http://localhost:3000",
@@ -18,6 +19,7 @@ app.get("/api/v1/health", (_request, response) => {
         timestamp: new Date().toISOString(),
     });
 });
+app.use("/api/v1/auth", authRouter);
 app.use((error, _request, response, _next) => {
     console.error(error);
     response.status(500).json({
