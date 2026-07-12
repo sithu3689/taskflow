@@ -8,6 +8,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import authRouter from "./routes/auth.routes.js";
+import adminRouter from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.get("/api/v1/health", (_request: Request, response: Response) => {
   });
 });
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/admin", adminRouter);
 
 app.use(
   (

@@ -4,6 +4,66 @@ import { prisma } from "../config/prisma.js";
 import { loginSchema } from "../schemas/auth.schema.js";
 import { generateAccessToken } from "../utils/jwt.js";
 
+export async function getCurrentUser(
+  request: Request,
+  response: Response,
+): Promise<void> {
+  try {
+    if (!request.user) {
+      response.status(401).json({
+        success: false,
+        message: "Authentication is required.",
+      });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: request.user.userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      response.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+      return;
+    }
+
+    if (!user.isActive) {
+      response.status(403).json({
+        success: false,
+        message: "Your account has been deactivated.",
+      });
+      return;
+    }
+
+    response.status(200).json({
+      success: true,
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    console.error("Get current user error:", error);
+
+    response.status(500).json({
+      success: false,
+      message: "Unable to retrieve the current user.",
+    });
+  }
+}
+
 export async function login(
   request: Request,
   response: Response,
