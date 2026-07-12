@@ -3,3 +3,11 @@ node_modules
 .env
 
 /generated/prisma
+
+node_modules/
+server/dist/
+dist/
+.next/
+generated/
+coverage/
+.env
