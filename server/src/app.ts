@@ -11,6 +11,7 @@ import authRouter from "./routes/auth.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import userRouter from "./routes/user.routes.js";
 import projectRouter from "./routes/project.routes.js";
+import projectMemberRouter from "./routes/projectMember.routes.js";
 const app = express();
 
 app.use(
@@ -36,6 +37,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/projects", projectMemberRouter);
 
 app.use(
   (
