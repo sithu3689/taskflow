@@ -12,6 +12,8 @@ import adminRouter from "./routes/admin.routes.js";
 import userRouter from "./routes/user.routes.js";
 import projectRouter from "./routes/project.routes.js";
 import projectMemberRouter from "./routes/projectMember.routes.js";
+import taskRouter from "./routes/task.routes.js";
+
 const app = express();
 
 app.use(
@@ -38,6 +40,7 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/projects", projectMemberRouter);
+app.use("/api/v1/tasks", taskRouter);
 
 app.use(
   (
