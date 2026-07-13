@@ -10,7 +10,7 @@ import morgan from "morgan";
 import authRouter from "./routes/auth.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import userRouter from "./routes/user.routes.js";
-
+import projectRouter from "./routes/project.routes.js";
 const app = express();
 
 app.use(
@@ -35,6 +35,7 @@ app.get("/api/v1/health", (_request: Request, response: Response) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/projects", projectRouter);
 
 app.use(
   (
