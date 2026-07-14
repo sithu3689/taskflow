@@ -1,0 +1,16 @@
+# Client
+client/node_modules
+client/.next
+client/.env.local
+
+# Server
+server/node_modules
+server/dist
+server/.env
+
+# Logs
+*.log
+
+# Operating System files
+.DS_Store
+Thumbs.db

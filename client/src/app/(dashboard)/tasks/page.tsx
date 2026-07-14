@@ -91,11 +91,7 @@ interface ProjectsResponse {
   success: boolean;
   message?: string;
   data?: {
-    projects: Array<{
-      id: string;
-      name: string;
-      managerId: string;
-    }>;
+    projects: ProjectSummary[];
     count: number;
   };
 }
@@ -134,10 +130,13 @@ function priorityClasses(priority: TaskPriority): string {
   switch (priority) {
     case "URGENT":
       return "bg-red-100 text-red-700";
+
     case "HIGH":
       return "bg-orange-100 text-orange-700";
+
     case "MEDIUM":
       return "bg-blue-100 text-blue-700";
+
     default:
       return "bg-slate-100 text-slate-700";
   }
@@ -243,10 +242,15 @@ export default function TasksPage() {
 
     const result = (await response.json()) as ProjectsResponse;
 
+    if (response.status === 401) {
+      redirectToLogin();
+      return;
+    }
+
     if (response.ok && result.success && result.data) {
       setProjects(result.data.projects);
     }
-  }, [apiUrl, getAuthentication]);
+  }, [apiUrl, getAuthentication, redirectToLogin]);
 
   useEffect(() => {
     async function initialise() {
@@ -297,6 +301,11 @@ export default function TasksPage() {
       );
 
       const result = (await response.json()) as MembersResponse;
+
+      if (response.status === 401) {
+        redirectToLogin();
+        return;
+      }
 
       if (!response.ok || !result.success || !result.data) {
         throw new Error(
@@ -499,77 +508,33 @@ export default function TasksPage() {
     );
   }
 
-  function handleLogout() {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("taskflowUser");
-    router.replace("/login");
-  }
-
   if (isLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-100">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-300 border-t-blue-600" />
 
           <p className="mt-4 text-slate-600">Loading tasks...</p>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-100">
+    <div className="min-h-screen">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-blue-600">
-              TaskFlow
-            </p>
+        <div className="mx-auto max-w-7xl px-6 py-6">
+          <p className="text-sm font-semibold text-blue-600">
+            TaskFlow
+          </p>
 
-            <h1 className="text-2xl font-bold text-slate-900">
-              Tasks
-            </h1>
+          <h1 className="mt-1 text-3xl font-bold text-slate-900">
+            Tasks
+          </h1>
 
-            <p className="mt-1 text-sm text-slate-500">
-              Create, assign and monitor project tasks.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => router.push("/dashboard")}
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              Dashboard
-            </button>
-
-            <button
-              type="button"
-              onClick={() => router.push("/projects")}
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              Projects
-            </button>
-
-            {currentUser?.role === "ADMIN" && (
-              <button
-                type="button"
-                onClick={() => router.push("/users")}
-                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                Users
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
-            >
-              Log out
-            </button>
-          </div>
+          <p className="mt-2 text-sm text-slate-500">
+            Create, assign and monitor project tasks.
+          </p>
         </div>
       </header>
 
@@ -629,7 +594,7 @@ export default function TasksPage() {
                     }))
                   }
                   rows={4}
-                  className="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none"
+                  className="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
               </div>
 
@@ -752,7 +717,7 @@ export default function TasksPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 disabled:bg-blue-400"
+                className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
               >
                 {isSubmitting ? "Creating..." : "Create task"}
               </button>
@@ -773,13 +738,19 @@ export default function TasksPage() {
           </div>
 
           {error && (
-            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div
+              role="alert"
+              className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
               {error}
             </div>
           )}
 
           {successMessage && (
-            <div className="mb-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            <div
+              role="status"
+              className="mb-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+            >
               {successMessage}
             </div>
           )}
@@ -886,6 +857,6 @@ export default function TasksPage() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

@@ -104,9 +104,25 @@ function formatDate(date: string | null): string {
   return new Date(date).toLocaleDateString();
 }
 
-function statusLabel(status: ProjectStatus): string {
-  return status.replaceAll("_", " ");
+function statusClasses(status: ProjectStatus): string {
+   switch (status) {
+    case "ACTIVE":
+      return "bg-emerald-100 text-emerald-700";
+
+    case "COMPLETED":
+      return "bg-indigo-100 text-indigo-700";
+
+    case "ON_HOLD":
+      return "bg-amber-100 text-amber-700";
+
+    case "CANCELLED":
+      return "bg-red-100 text-red-700";
+
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
 }
+
 
 export default function ProjectsPage() {
   const router = useRouter();
@@ -389,54 +405,10 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-blue-600">
-              TaskFlow
-            </p>
+    <main className="min-h-screen bg-slate-50">
+      
 
-            <h1 className="text-2xl font-bold text-slate-900">
-              Projects
-            </h1>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Create projects and monitor assigned teams.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => router.push("/dashboard")}
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              Dashboard
-            </button>
-
-            {currentUser?.role === "ADMIN" && (
-              <button
-                type="button"
-                onClick={() => router.push("/users")}
-                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                Users
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
-            >
-              Log out
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[380px_1fr]">
+      <div className="mx-auto grid max-w-[1600px] gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[380px_1fr] lg:px-8">
         {canCreateProject && (
           <section className="h-fit rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="text-xl font-bold text-slate-900">
@@ -645,7 +617,7 @@ export default function ProjectsPage() {
             {projects.map((project) => (
               <article
                 key={project.id}
-                className="rounded-2xl bg-white p-6 shadow-sm"
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -658,9 +630,13 @@ export default function ProjectsPage() {
                     </p>
                   </div>
 
-                  <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                    {statusLabel(project.status)}
-                  </span>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClasses(
+                    project.status,
+                    )}`}
+                >
+                         {project.status.replaceAll("_", " ")}
+                 </span>
                 </div>
 
                 <p className="mt-4 min-h-12 text-sm text-slate-600">
@@ -700,7 +676,7 @@ export default function ProjectsPage() {
             ))}
 
             {projects.length === 0 && (
-              <div className="rounded-2xl bg-white p-12 text-center text-slate-500 shadow-sm xl:col-span-2">
+              <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center text-slate-500 shadow-sm xl:col-span-2">
                 No projects were found.
               </div>
             )}
