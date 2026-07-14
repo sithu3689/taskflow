@@ -182,15 +182,17 @@ export default function DashboardPage() {
                 {user.role.replaceAll("_", " ")}
               </p>
             </div>
-            {user.role === "ADMIN" && (
-              <button
-               type="button"
-               onClick={() => router.push("/users")}
-              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-               >
-               Manage users
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+              {user.role === "ADMIN" && (
+            <button
+            type="button"
+            onClick={() => router.push("/users")}
+            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+             >
+             Manage users
+            </button>
             )}
+
             <button
              type="button"
              onClick={() => router.push("/projects")}
@@ -198,14 +200,23 @@ export default function DashboardPage() {
              >
              Projects
             </button>
-             
+
             <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            type="button"
+            onClick={() => router.push("/tasks")}
+            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
-              Log out
+            Tasks
             </button>
+
+            <button
+            type="button"
+            onClick={handleLogout}
+            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+             >
+            Log out
+            </button>
+</div>
           </div>
         </div>
       </header>
