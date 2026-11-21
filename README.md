@@ -111,24 +111,12 @@ client/.env.local
 ```
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+PUBLIC_API_URL=http://localhost:5000/api/v1
 ```
 
 ### Server
 
-Create:
 
-```
-server/.env
-```
-
-```env
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
-PORT=5000
-```
-
----
 
 ## Screenshots
 
